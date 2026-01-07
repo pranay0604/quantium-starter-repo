@@ -1,31 +1,43 @@
-import pandas as pd
-from pathlib import Path
+import csv
+import os
 
-csv_files = Path(".").glob("daily_sales_data_*.csv")
+DATA_DIRECTORY = "."
+OUTPUT_FILE_PATH = "./formatted_output.csv"
 
-# files = [
-#     "data/daily_sales_data_0.csv",
-#     "data/daily_sales_data_1.csv",
-#     "data/daily_sales_data_2.csv"
-# ]
+# open the output file
+with open(OUTPUT_FILE_PATH, "w") as output_file:
+    writer = csv.writer(output_file)
 
-dataframes = []
+    # add a csv header
+    header = ["sales", "date", "region"]
+    writer.writerow(header)
 
-for file in csv_files:
-    df = pd.read_csv(file)
+    # iterate through all files in the data directory
+    for file_name in os.listdir(DATA_DIRECTORY):
+        # open the csv file for reading
+        with open(f"{DATA_DIRECTORY}/{file_name}", "r", encoding="latin-1") as input_file:
 
-    df = df[df['product'] == 'pink morsel']
+            reader = csv.reader(input_file)
+            # iterate through each row in the csv file
+            row_index = 0
+            for input_row in reader:
+                # if this row is not the csv header, process it
+                if row_index > 0 and len(input_row) >= 5:
 
-    df['sales'] = df['quantity'] * df['price']
+                    # collect data from row
+                    product = input_row[0]
+                    raw_price = input_row[1]
+                    quantity = input_row[2]
+                    transaction_date = input_row[3]
+                    region = input_row[4]
 
-    df = df[['sales','date','region']]
+                    # if this is a pink morsel transaction, process it
+                    if product == "pink morsel":
+                        # finish formatting data
+                        price = float(raw_price[1:])
+                        sale = price * int(quantity)
 
-    dataframes.append(df)
-
-    final_df = pd.concat(dataframes, ignore_index=True)
-
-    final_df.to_csv("formatted_output.csv", index=False)
-
-    print("formatted_output.csv created successfully!")
-
-
+                        # write the row to output file
+                        output_row = [sale, transaction_date, region]
+                        writer.writerow(output_row)
+                row_index += 1
