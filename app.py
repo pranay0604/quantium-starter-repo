@@ -69,14 +69,14 @@ app.layout = html.Div(
                 "boxShadow":"0px 4px 10px rgba(0,0,0,0.1)"
             },
             children=[
-                dcc.Graph(id="Sales-Line-Chart")
+                dcc.Graph(id="sales-line-chart")
             ]
         )
     ]
 )
 
 @app.callback(
-    Output("Sales-Line-Chart","figure"),
+    Output("sales-line-chart","figure"),
     Input("region-filter","value")
 )
 
@@ -89,7 +89,7 @@ def update_chart(selected_region):
     fig = px.line(
         filtered_df,
         x="date",
-        y="sales",
+        y="Sales",
         color="region" if selected_region == "all" else None,
         labels={
             "date":"Date",
