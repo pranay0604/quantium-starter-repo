@@ -41,3 +41,6 @@ with open(OUTPUT_FILE_PATH, "w") as output_file:
                         output_row = [sale, transaction_date, region]
                         writer.writerow(output_row)
                 row_index += 1
+
+
+
